@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Babylon.js Website with Bootstrap</title>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-sm-3">
+          <h3>Upload a 3D Model</h3>
+          <form>
+            <div class="form-group">
+              <input type="file" id="model-file" accept=".obj, .gltf, .glb, .babylon, .stl">
+            </div>
+          </form>
+          
+          <!-- Change Mesh Material -->
+          <h3>Change Material</h3>
+          <form>
+            <div class="form-group">
+              <select id="material-list" class="form-control">
+                <option value="">Select a Material</option>
+                <option value="standard">Standard</option>
+                <option value="pbr">PBR</option>
+                <option value="water">Water</option>
+              </select>
+            </div>
+          </form>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-sm-9">
+          <!-- Render Canvas -->
+          <canvas id="render-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Babylon.js Script -->
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script>
+      // Get the canvas element
+      var canvas = document.getElementById("render-canvas");
+
+      // Create a Babylon.js engine object
+      var engine = new BABYLON.Engine(canvas, true);
+
+      // Create a Babylon.js scene object
+      var scene = new BABYLON.Scene(engine);
+
+      // Load a model
+      var modelFile = document.getElementById("model-file");
+      modelFile.addEventListener("change", function(event) {
+        var file = event.target.files[0];
+        BABYLON.SceneLoader.ImportMesh("", "", file, scene, function(meshes) {
+          scene.activeMesh = meshes[0];
+          
+          // Change the mesh material
+          var materialList = document.getElementById("material-list");
+          materialList.addEventListener("change", function(event) {
+            var materialType = event.target.value;
+            var material
+     switch (materialType) {
+              case "standard":
+                scene.activeMesh.material = new BABYLON.StandardMaterial("standard", scene);
+                break;
+              case "pbr":
+                scene.activeMesh.material = new BABYLON.PBRMaterial("pbr", scene);
+                break;
+              case "water":
+                scene.activeMesh.material = new BABYLON.WaterMaterial("water", scene, new BABYLON.Vector2(512, 512));
+                break;
+              default:
+                scene.activeMesh.material = new BABYLON.StandardMaterial("standard", scene);
+                break;
+            }
+          });
+        });
+      });
+
+      // Render the scene
+      engine.runRenderLoop(function() {
+        scene.render();
+      });
+    </script>
+
+    <!-- Include Bootstrap JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
